@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import pytest
-import rp
+import unshuffle
 
 @pytest.fixture
 def words_file():
@@ -35,4 +35,4 @@ deor oder 100"""
 
 @pytest.fixture
 def translator (dict_contents):
-    return rp.Translator(dict_contents)
+    return unshuffle.Translator(dict_contents)

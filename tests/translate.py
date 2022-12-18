@@ -2,7 +2,7 @@
 import pytest
 import random
 
-from rp import *
+from unshuffle import *
 
 @pytest.fixture
 
@@ -60,7 +60,7 @@ def test_translate_token(translator, original, shuffled, expected_translation):
     ],
 )
 def test_translate_nonwords(translator, token):
-    with pytest.raises(NonWordString):
+    with pytest.raises(NotAWord):
         translator.translate_token(token)
 
 @pytest.mark.parametrize(
