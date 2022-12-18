@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import pytest
-import unshuffle
+from unshuffle import Dict, Text
 
 @pytest.fixture
 def words_file():
@@ -35,5 +35,9 @@ eefnru freuen 100
 deor oder 100"""
 
 @pytest.fixture
-def translator (dict_contents):
-    return unshuffle.Translator(dict_contents)
+def dict_(dict_contents):
+    return Dict(dict_contents)
+
+@pytest.fixture
+def text(dict_):
+    return Text(dict_)

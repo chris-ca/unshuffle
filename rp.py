@@ -5,7 +5,7 @@ import re
 from bs4 import BeautifulSoup
 from bs4.diagnose import diagnose
 
-from unshuffle import Translator, generate_dict, get_word_id
+from unshuffle import Text, Dict, generate_dict, get_word_id
 
 logger = logging.getLogger(__name__)
 
@@ -80,12 +80,12 @@ if __name__ == '__main__':
 
     if args.command == 'translate':
         try:
-            d = Translator(args.dict)
-            text = args.text if args.text is not None else get_text_from_url(args.url)
-            logger.debug('Original: '+text)
-            print(d.translate(text))
-            transl_percent = round(d.translated / (d.not_translated + d.translated)*100,1)
-            logger.info(f'Translated: {d.translated} ({transl_percent}%), unknown: {d.not_translated}')
+            text = Text(Dict(args.dict))
+            text.shuffled = args.text if args.text is not None else get_text_from_url(args.url)
+            logger.debug('Original: '+text.shuffled)
+            print(text)
+            transl_percent = round(text.translated / (text.not_translated + text.translated)*100,1)
+            logger.info(f'Translated: {text.translated} ({transl_percent}%), unknown: {text.not_translated}')
         except TextNotFoundException as e:
             print(str(e))
     elif args.command == 'make_dict':
