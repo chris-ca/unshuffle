@@ -31,6 +31,7 @@ Terü Türe 13
 Wir Wir 100
 nsu uns 98167
 eefnru freuen 100
+-BKaeeeklnrsstu Bernkastel-Kues 200
 deor oder 100"""
 
 @pytest.fixture

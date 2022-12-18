@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 RX_PUNCTUATION = re.compile('[)(\'"“„.,;:?!/-]')
 
-
 class WordNotFound(Exception):
     """The (regular) word is not in the dictionary."""
     pass
@@ -90,13 +89,17 @@ class Translator:
 
         punctuation = ''
         try:
-            token, punctuation = word_parts(token)
             key = get_word_id(token)
-            token = self.dictionary[key]
+            if key in self.dictionary:
+                token = self.dictionary[key]
+                return token
+            else:
+                token, punctuation = word_parts(token)
+                key = get_word_id(token)
+                token = self.dictionary[key]
+                return token+punctuation
         except (KeyError, ValueError):
             raise WordNotFound
-
-        return token+punctuation
 
     def translate(self, text: str) -> str:
         """Return translation of paragraph or word.

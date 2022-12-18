@@ -40,6 +40,7 @@ def test_read_dictionary_from_file(dict_file):
 @pytest.mark.parametrize(
     "shuffled, original, expected_translation",
     [
+        ('Bnerkastel-Kseu','Bernkastel-Kues', True),
         ('Wiehnenctah','Weihnachten', True),
         ('teOsnr','Ostern', True),
         ('INVALIDKEY','INVALIDWORD', False)
