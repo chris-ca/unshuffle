@@ -23,20 +23,11 @@ class Untranslatable(Exception):
     """Raised if word cannot be """
     pass
 
-class Translator:
-    """Generate dictionary and 'translate' the actual text."""
-
-    """If a string contains only non-alphanumeric characters it is considered
-    not a word"""
-    RX_NONWORDS = re.compile(r'^[\s.,;:?!/-]+$')
+class Dict():
+    """Load dict and init variables."""
 
     def __init__(self, dict_):
-        """Load dict and init variables."""
         self._load_dict(dict_)
-        self.token = 0
-        self.translated = 0
-        self.not_translated = 0
-        self.non_words = 0
 
     def _load_dict(self, dict_):
         self.dictionary = {}
@@ -59,96 +50,6 @@ class Translator:
         else:
             load_dict_from_file(dict_)
         logger.info('Dict loaded: {} entries'.format(len(self.dictionary)))
-
-    def is_a_word(self, token) -> bool:
-        """Return True if string seems to be a word, otherwise False"""
-        if len(token) == 1:
-            return False
-        if re.match(self.RX_NONWORDS, token):
-            return False
-        return True
-
-    def translate_token(self, token: str) -> str:
-        """Return translation of a string.
-        
-        Args:
-            token: the garbled string to translate
-        Returns:
-            token: the translated string 
-        Raises:
-            WordNotFound: if a regular word is not in dictionary
-            NotAWord: if string contains only whitespace or non-alnum characters
-            Untranslatable: if string cannot be translated (e.g. multi digit numbers)
-        """
-
-        if not self.is_a_word(token):
-            raise NotAWord
-
-        if re.findall('[0-9]{2,}', token):
-            raise Untranslatable
-
-        punctuation = ''
-        try:
-            key = get_word_id(token)
-            if key in self.dictionary:
-                token = self.dictionary[key]
-                return token
-            else:
-                token, punctuation = word_parts(token)
-                key = get_word_id(token)
-                token = self.dictionary[key]
-                return token+punctuation
-        except (KeyError, ValueError):
-            raise WordNotFound
-
-    def translate(self, text: str) -> str:
-        """Return translation of paragraph or word.
-
-        Args:
-            text: the garbled string to translate
-        Returns:
-            text: the translated text. Unknown words will be surrounded with '?'
-        """
-        block = ''
-        
-        for token in re.split(r'(\s+)', text):
-
-            try:
-                token = self.translate_token(token)
-                self.translated += 1
-            except WordNotFound:
-                token = f"w¿{token}?"
-                self.not_translated += 1
-            except Untranslatable:
-                token = f"u¿{token}?"
-                self.not_translated += 1
-            except NotAWord:
-                self.non_words += 1
-                pass
-            block += token
-        #breakpoint()
-        
-        return block
-
-
-def get_word_id(word: str) -> str:
-    """Return string in alphabetical order."""
-    return ''.join(sorted(word))
-
-def word_parts(word: str) -> list:
-    """Separate punctuation and letters.
-
-    Returns:
-        - word, punctuation
-    Throws:
-        - KeyError if a word cannot be parsed
-    """
-    match = re.search(RX_PUNCTUATION, word)
-    punctuation = ''
-    if match is not None:
-        punctuation = match[0]
-        word = RX_PUNCTUATION.sub('', word)
-    return word, punctuation
 
 def generate_dict(frequency_file, dict_file):
     """Generate dictionary file.
@@ -204,4 +105,126 @@ def generate_dict(frequency_file, dict_file):
             df.write(k+" "+i[0]+" "+i[1]+"\n")
     dict_len = len(dictionary.items())
     logger.info(f"Dictionary {dict_file} with {dict_len} entries generated ")
+
+
+class Text:
+    """Generate dictionary and 'translate' the actual text."""
+
+    """If a string contains only non-alphanumeric characters it is considered
+    not a word"""
+    RX_NONWORDS = re.compile(r'^[\s.,;:?!/-]+$')
+
+    def __init__(self, dict_):
+        """Load dict and init variables."""
+        self.dictionary = dict_.dictionary
+        self.token = 0
+        self.translated = 0
+        self.not_translated = 0
+        self.non_words = 0
+        self._shuffled = None
+
+    def _is_a_word(self, token) -> bool:
+        """Return True if string seems to be a word, otherwise False"""
+        if len(token) == 1:
+            return False
+        if re.match(self.RX_NONWORDS, token):
+            return False
+        return True
+
+    def __repr__(self):
+        return self.unshuffled
+
+    def translate_token(self, token: str) -> str:
+        """Return translation of a string (token).
+        
+        If the token contains non-alphanumeric characters (e.g. punctuation)
+        translation including those characters is tried.
+
+        Args:
+            token: the garbled string to translate
+        Returns:
+            token: the translated string 
+        Raises:
+            WordNotFound: if a token is not in dictionary
+            NotAWord: if string contains only whitespace or non-alnum characters
+            Untranslatable: if string cannot be translated (e.g. multi digit numbers)
+        """
+        if not self._is_a_word(token):
+            raise NotAWord
+
+        if re.findall('[0-9]{2,}', token):
+            raise Untranslatable
+
+        punctuation = ''
+        try:
+            key = get_word_id(token)
+            if key in self.dictionary:
+                token = self.dictionary[key]
+                return token
+            else:
+                token, punctuation = word_parts(token)
+                key = get_word_id(token)
+                token = self.dictionary[key]
+                return token+punctuation
+        except (KeyError, ValueError):
+            raise WordNotFound
+
+    @property
+    def unshuffled(self):
+        return self.translate()
+
+    @property
+    def shuffled(self):
+        return self._shuffled
+
+    @shuffled.setter
+    def shuffled(self, s):
+        self._shuffled = s
+
+    def translate(self) -> str:
+        """Return translation of paragraph or word.
+
+        Args:
+            shuffled: the shuffled string to translate
+        Returns:
+            Text: Text object
+        """
+        block = ''
+        
+        for token in re.split(r'(\s+)', self.shuffled):
+
+            try:
+                token = self.translate_token(token)
+                self.translated += 1
+            except WordNotFound:
+                token = f"w¿{token}?"
+                self.not_translated += 1
+            except Untranslatable:
+                token = f"u¿{token}?"
+                self.not_translated += 1
+            except NotAWord:
+                self.non_words += 1
+                pass
+            block += token
+
+        return block
+
+def get_word_id(word: str) -> str:
+    """Return string in alphabetical order."""
+    return ''.join(sorted(word))
+
+def word_parts(word: str) -> list:
+    """Separate punctuation and letters.
+
+    Returns:
+        - word, punctuation
+    Throws:
+        - KeyError if a word cannot be parsed
+    """
+    match = re.search(RX_PUNCTUATION, word)
+    punctuation = ''
+    if match is not None:
+        punctuation = match[0]
+        word = RX_PUNCTUATION.sub('', word)
+    return word, punctuation
 
