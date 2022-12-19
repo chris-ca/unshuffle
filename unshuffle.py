@@ -126,11 +126,12 @@ class Text:
     def __init__(self, dict_):
         """Load dict and init variables."""
         self.dictionary = dict_.dictionary
-        self.token = 0
-        self.translated = 0
-        self.not_translated = 0
-        self.non_words = 0
+        self.tokens_processed = 0
+        self.tokens_translated = 0
+        self.tokens_not_translated = 0
+        self.tokens_not_words = 0
         self._shuffled = None
+        self._unshuffled = None
 
     def _is_a_word(self, token) -> bool:
         """Return True if string seems to be a word, otherwise False"""
@@ -181,14 +182,17 @@ class Text:
 
     @property
     def percent_translated(self):
+        self.translate()
         return round(
-            self.translated / (self.not_translated + self.translated) * 100, 1
+            self.tokens_translated / (self.tokens_translated + self.tokens_not_translated) * 100, 1
         )
 
     @property
     def unshuffled(self):
         """return translated text"""
-        return self.translate()
+        if self._unshuffled is None:
+            self._unshuffled = self.translate()
+        return self._unshuffled
 
     @property
     def shuffled(self):
@@ -197,6 +201,7 @@ class Text:
 
     @shuffled.setter
     def shuffled(self, text):
+        """set shuffled text"""
         self._shuffled = text
 
     def translate(self) -> str:
@@ -210,22 +215,21 @@ class Text:
         block = ""
 
         for token in re.split(r"(\s+)", self.shuffled):
-
+            self.tokens_processed += 1
             try:
                 token = self.translate_token(token)
-                self.translated += 1
+                self.tokens_translated += 1
             except WordNotFound:
                 token = f"w¿{token}?"
-                self.not_translated += 1
+                self.tokens_not_translated += 1
             except Untranslatable:
                 token = f"u¿{token}?"
-                self.not_translated += 1
+                self.tokens_not_translated += 1
             except NotAWord:
-                self.non_words += 1
+                self.tokens_not_words += 1
             block += token
 
         return block
-
 
 def get_word_id(word: str) -> str:
     """Return string in alphabetical order."""

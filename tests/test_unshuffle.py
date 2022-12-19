@@ -60,6 +60,6 @@ def test_translate_nonwords(text, token):
     ]
 )
 def test_translate_paragraph(text, shuffled, unshuffled):
-    text.shuffled = shuffled
     assert isinstance(text, Text)
+    text.shuffled = shuffled
     assert str(text) == unshuffled

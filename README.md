@@ -5,6 +5,11 @@ Ziel des Programms ist es
 - Die Textteile aus der Website zu extrahieren
 - Anhand eines Wörterbuchs die einzelnen Wörter in "echte" Wörter zu übersetzen
 
+## Entwicklungsziele
+- `pylint` Hinweise weitestmöglich korrigieren
+- `black` Formatregeln 
+- `pytest` durchlaufend mit größtmöglicher Code Coverage
+
 ## Out of Scope / Bekannte Probleme
 - Keine Kontexterkennung: Zeichenketten werden isoliert betrachtet und allein aufgrund der enthaltenen Zeichen erraten
 - Zahlen können nicht erraten werden

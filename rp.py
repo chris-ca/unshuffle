@@ -51,6 +51,7 @@ def get_text_from_url(url) -> str:
         text += p.text
 
     if text == "":
+        logger.debug(response.text)
         raise TextNotFoundException("Shuffled text not found in response")
 
     return text
@@ -96,12 +97,12 @@ if __name__ == "__main__":
             text.shuffled = (
                 args.text if args.text is not None else get_text_from_url(args.url)
             )
-            print(text)
+            text.translate()
             logger.info(
-                "Stats: %s words translated (%d%%), %d words unknown",
-                text.translated,
+                "Stats: %d words translated (%d%%), %d words unknown",
+                text.tokens_translated,
                 text.percent_translated,
-                text.not_translated,
+                text.tokens_not_translated,
             )
         except TextNotFoundException as e:
             print(str(e))
