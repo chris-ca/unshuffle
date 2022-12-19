@@ -1,4 +1,14 @@
 ## Idee
+Einige Websites zeigen unregistrierten Nutzern nur Platzhalter-Text, bei dem die Buchstaben einzelner Wörter durcheinandergewürfelt sind.
+
+Ziel des Programms ist es
+- Die Textteile aus der Website zu extrahieren
+- Anhand eines Wörterbuchs die einzelnen Wörter in "echte" Wörter zu übersetzen
+
+## Out of Scope / Bekannte Probleme
+- Keine Kontexterkennung: Zeichenketten werden isoliert betrachtet und allein aufgrund der enthaltenen Zeichen erraten
+- Zahlen können nicht erraten werden
+- Kurze Zeichenketten (Sie, Sei, Eis) können häufig nicht zuverlässig übersetzt werden
 
 ## Installation
 - Requirements installieren
@@ -17,3 +27,4 @@
     INFO - Words ignored(dupes): 39761/(9561)
 
     ```
+
