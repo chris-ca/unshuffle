@@ -68,8 +68,8 @@ def generate_dict(frequency_file, dict_file):
     ignored = 0
     lines = 0
 
-    with open(frequency_file, "r", encoding="utf-8") as ff:
-        for line in ff:
+    with open(frequency_file, "r", encoding="utf-8") as ff_handle:
+        for line in ff_handle:
             lines += 1
             try:
                 _, *word, frequency = line.split()
@@ -167,16 +167,23 @@ class Text:
         punctuation = ""
         try:
             key = get_word_id(token)
+
             if key in self.dictionary:
-                token = self.dictionary[key]
-                return token
-            else:
-                token, punctuation = word_parts(token)
-                key = get_word_id(token)
-                token = self.dictionary[key]
-                return token + punctuation
+                return self.dictionary[key]
+
+            token, punctuation = word_parts(token)
+            key = get_word_id(token)
+            token = self.dictionary[key]
+            return token + punctuation
+
         except (KeyError, ValueError) as exc:
             raise WordNotFound from exc
+
+    @property
+    def percent_translated(self):
+        return round(
+            self.translated / (self.not_translated + self.translated) * 100, 1
+        )
 
     @property
     def unshuffled(self):

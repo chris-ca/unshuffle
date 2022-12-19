@@ -3,16 +3,13 @@ import logging
 import requests
 import re
 from bs4 import BeautifulSoup
-from bs4.diagnose import diagnose
 
 from unshuffle import Text, Dict, generate_dict, get_word_id
 
 logger = logging.getLogger(__name__)
 
-
 class TextNotFoundException(Exception):
     pass
-
 
 def get_text_from_url(url) -> str:
     """GET Url and extract shuffled text from it.
@@ -88,11 +85,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     ch = logging.StreamHandler()
-    formatter = logging.Formatter("%(levelname)s - %(message)s")
+    formatter = logging.Formatter("%(levelname)s - %(module)s - %(message)s")
     ch.setFormatter(formatter)
     logger.addHandler(ch)
-
-    logging.basicConfig(level=args.loglevel)
+    logger.setLevel(args.loglevel)
 
     if args.command == "translate":
         try:
@@ -100,13 +96,12 @@ if __name__ == "__main__":
             text.shuffled = (
                 args.text if args.text is not None else get_text_from_url(args.url)
             )
-            logger.debug("Original: " + text.shuffled)
             print(text)
-            transl_percent = round(
-                text.translated / (text.not_translated + text.translated) * 100, 1
-            )
             logger.info(
-                f"Translated: {text.translated} ({transl_percent}%), unknown: {text.not_translated}"
+                "Stats: %s words translated (%d%%), %d words unknown",
+                text.translated,
+                text.percent_translated,
+                text.not_translated,
             )
         except TextNotFoundException as e:
             print(str(e))
