@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""A module to "decrypt" shuffled words based on their occurance in everyday language.
-
-This program is first of all an exercise to improve my Python coding+style.
+"""A module to "decrypt" shuffled words based on the frequency of occurance in everyday language.
 """
 import sys, re
 
@@ -105,7 +103,6 @@ def generate_dict(frequency_file, dict_file):
             df.write(k+" "+i[0]+" "+i[1]+"\n")
     dict_len = len(dictionary.items())
     logger.info(f"Dictionary {dict_file} with {dict_len} entries generated ")
-
 
 class Text:
     """Generate dictionary and 'translate' the actual text."""
