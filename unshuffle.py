@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """A module to "decrypt" shuffled words based on the frequency of occurance in everyday language.
 """
-import sys, re
+import re
 
 import logging
 
@@ -11,15 +11,12 @@ RX_PUNCTUATION = re.compile('[)(\'"“„.,;:?!/-]')
 
 class WordNotFound(Exception):
     """The (regular) word is not in the dictionary."""
-    pass
 
 class NotAWord(Exception):
     """The string is not a word, but rather a delimiter"""
-    pass
 
 class Untranslatable(Exception):
     """Raised if word cannot be """
-    pass
 
 class Dict():
     """Load dict and init variables."""
@@ -31,8 +28,8 @@ class Dict():
         self.dictionary = {}
 
         def load_dict_from_file(dict_file):
-            with open(dict_file, 'r') as df:
-                for line in df:
+            with open(dict_file, 'r', encoding='utf-8') as df_handle:
+                for line in df_handle:
                     add_to_dict(line)
 
         def load_dict_from_text(text):
@@ -47,7 +44,7 @@ class Dict():
             load_dict_from_text(dict_)
         else:
             load_dict_from_file(dict_)
-        logger.info('Dict loaded: {} entries'.format(len(self.dictionary)))
+        logger.info('Dict loaded: %d entries', len(self.dictionary))
 
 def generate_dict(frequency_file, dict_file):
     """Generate dictionary file.
@@ -55,7 +52,8 @@ def generate_dict(frequency_file, dict_file):
     Source file is expected to be in following format:
     `[number] [word] [frequency]`
 
-    Default source files used are taken from (https://wortschatz.uni-leipzig.de/en/download/German#deu_news_2021)[Uni Leipzig Corpora]
+    Default source files used are taken from
+    (https://wortschatz.uni-leipzig.de/en/download/German#deu_news_2021)[Uni Leipzig Corpora]
 
     - Lines with multiple words or single characters are ignored
     - If more than 1 fingerprint/key exists for a word, the less frequent word will be ignored
@@ -65,20 +63,20 @@ def generate_dict(frequency_file, dict_file):
     ignored = 0
     lines = 0
 
-    with open(frequency_file, 'r') as ff:
+    with open(frequency_file, 'r', encoding='utf-8') as ff:
         for line in ff:
             lines += 1
             try:
-                pos, *word, frequency =  line.split()
+                _, *word, frequency =  line.split()
 
                 if len(word) > 1:
-                    """Ignore multiple words""" 
+                    # Ignore multiple words
                     word = ' '.join(w for w in word)
                     raise ValueError("Sentence")
 
                 word = word[0].strip()
 
-                """Ignore single characters""" 
+                # Ignore single characters
                 if len(word) == 1:
                     raise ValueError("Single")
 
@@ -86,29 +84,29 @@ def generate_dict(frequency_file, dict_file):
                 existing_entry = dictionary.get(key, None)
 
                 # Skip if existing entry is more common
-                if existing_entry != None and int(existing_entry[1]) > int(frequency):
+                if existing_entry is not None and int(existing_entry[1]) > int(frequency):
                     duplicates += 1
                     raise ValueError('Duplicate')
 
                 dictionary[key] = [word, frequency]
-            except ValueError as e:
-                logger.debug(f"Ignored line {lines}: '{word}' (n={frequency}): "+str(e))
+            except ValueError as exc:
+                logger.debug("Ignored line %s: '%s' (n=%d): %s", lines, word, int(frequency), str(exc))
                 ignored += 1
 
-    logger.info(f"Lines checked: {lines}")
-    logger.info(f"Words ignored (thereof dupes): {ignored} ({duplicates}) ")
+    logger.info("Lines checked: %s", lines)
+    logger.info("Words ignored (thereof dupes): %d (%d) ", ignored, duplicates)
 
-    with open(dict_file, 'w') as df:
+    with open(dict_file, 'w', encoding='utf-8') as df_handle:
         for k, i in dictionary.items():
-            df.write(k+" "+i[0]+" "+i[1]+"\n")
+            df_handle.write(k+" "+i[0]+" "+i[1]+"\n")
     dict_len = len(dictionary.items())
-    logger.info(f"Dictionary {dict_file} with {dict_len} entries generated ")
+    logger.info("Dictionary %s with %d entries generated ", dict_file, dict_len)
 
 class Text:
     """Generate dictionary and 'translate' the actual text."""
 
-    """If a string contains only non-alphanumeric characters it is considered
-    not a word"""
+    # If a string contains only non-alphanumeric characters it is considered
+    # not a word
     RX_NONWORDS = re.compile(r'^[\s.,;:?!/-]+$')
 
     def __init__(self, dict_):
@@ -133,14 +131,14 @@ class Text:
 
     def translate_token(self, token: str) -> str:
         """Return translation of a string (token).
-        
+
         If the token contains non-alphanumeric characters (e.g. punctuation)
         translation including those characters is tried.
 
         Args:
             token: the garbled string to translate
         Returns:
-            token: the translated string 
+            token: the translated string
         Raises:
             WordNotFound: if a token is not in dictionary
             NotAWord: if string contains only whitespace or non-alnum characters
@@ -163,20 +161,22 @@ class Text:
                 key = get_word_id(token)
                 token = self.dictionary[key]
                 return token+punctuation
-        except (KeyError, ValueError):
-            raise WordNotFound
+        except (KeyError, ValueError) as exc:
+            raise WordNotFound from exc
 
     @property
     def unshuffled(self):
+        """return translated text"""
         return self.translate()
 
     @property
     def shuffled(self):
+        """return shuffled text"""
         return self._shuffled
 
     @shuffled.setter
-    def shuffled(self, s):
-        self._shuffled = s
+    def shuffled(self, text):
+        self._shuffled = text
 
     def translate(self) -> str:
         """Return translation of paragraph or word.
@@ -187,7 +187,7 @@ class Text:
             Text: Text object
         """
         block = ''
-        
+
         for token in re.split(r'(\s+)', self.shuffled):
 
             try:
@@ -201,7 +201,6 @@ class Text:
                 self.not_translated += 1
             except NotAWord:
                 self.non_words += 1
-                pass
             block += token
 
         return block
@@ -224,4 +223,3 @@ def word_parts(word: str) -> list:
         punctuation = match[0]
         word = RX_PUNCTUATION.sub('', word)
     return word, punctuation
-

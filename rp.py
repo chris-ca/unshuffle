@@ -70,13 +70,12 @@ if __name__ == '__main__':
     parser.add_argument("--debug", action="store_const", dest="loglevel", const=logging.DEBUG, default=logging.INFO)
     args = parser.parse_args()
 
-    logger.setLevel(logging.DEBUG)
     ch = logging.StreamHandler()
     formatter = logging.Formatter('%(levelname)s - %(message)s')
     ch.setFormatter(formatter)
     logger.addHandler(ch)
 
-    logger.setLevel(args.loglevel)
+    logging.basicConfig(level=args.loglevel)
 
     if args.command == 'translate':
         try:
