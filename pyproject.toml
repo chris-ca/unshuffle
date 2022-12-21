@@ -1,9 +1,12 @@
 [tool.poetry]
 name = "unshuffle"
-version = "0.1.0"
-description = ""
+version = "0.1.5"
+description = "Unshuffle words based on dictionary"
 authors = ["Chris Weyland <github@nextmail.cc>"]
 readme = "README.md"
+
+[tool.poetry.scripts]
+unshuffle = 'unshuffle.unshfl:run'
 
 [tool.poetry.dependencies]
 python = "^3.10"
