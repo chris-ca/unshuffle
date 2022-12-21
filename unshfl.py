@@ -44,7 +44,12 @@ if args.command == "translate":
     text.shuffled = (
         args.text if args.text is not None else get_text_from_url(args.url)
     )
-    print(text.translate())
+
+    if text.unshuffled == '':
+        print("Text not found")
+    else:
+        print(text.unshuffled)
+
     logger.info(
         "Stats: %d words translated (%d%%), %d words unknown",
         text.tokens_translated,

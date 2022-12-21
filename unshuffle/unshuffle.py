@@ -54,7 +54,7 @@ class Text:
 
     def _is_a_word(self, token) -> bool:
         """Return True if string seems to be a word, otherwise False"""
-        if len(token) == 1:
+        if len(token) <= 1:
             return False
         if re.match(self.RX_NONWORDS, token):
             return False
@@ -104,9 +104,10 @@ class Text:
     @property
     def percent_translated(self):
         self.translate()
-        return round(
+        total = self.tokens_translated + self.tokens_not_translated
+        return 0 if total == 0 else round(
             self.tokens_translated
-            / (self.tokens_translated + self.tokens_not_translated)
+            / total
             * 100,
             1,
         )
