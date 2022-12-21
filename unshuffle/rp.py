@@ -22,8 +22,10 @@ from unshuffle import Text, Dict, generate_dict, get_word_id
 
 logger = logging.getLogger(__name__)
 
+
 class TextNotFoundException(Exception):
     pass
+
 
 def get_text_from_url(url) -> str:
     """GET Url and extract shuffled text from it.

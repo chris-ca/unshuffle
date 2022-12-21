@@ -6,6 +6,7 @@ There is no further analysis of the grammar or meaning of the word. Shuffled
 strings are simply replaced based on the generated dictionary.
 
 Example::
+
     shuffled_text = "grubereheCes" 
     txt = Text(Dict('dict.txt'))
     txt.shuffled = shuffled_text
@@ -195,7 +196,10 @@ class Text:
     def percent_translated(self):
         self.translate()
         return round(
-            self.tokens_translated / (self.tokens_translated + self.tokens_not_translated) * 100, 1
+            self.tokens_translated
+            / (self.tokens_translated + self.tokens_not_translated)
+            * 100,
+            1,
         )
 
     @property
@@ -241,6 +245,7 @@ class Text:
             block += token
 
         return block
+
 
 def get_word_id(word: str) -> str:
     """Return string in alphabetical order."""

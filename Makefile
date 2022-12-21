@@ -2,10 +2,10 @@ install:
 	pip install -r requirements.txt
 
 format:
-	black *.py
+	black unshuffle/*.py
 
 lint:
-	pylint ./unshuffle.py
+	pylint ./unshuffle/unshuffle.py
 	# pylint --disable=R,C ./hello
 
 test:
