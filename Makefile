@@ -1,11 +1,11 @@
 install:
-	pip install -r requirements.txt
+	poetry install
 
 format:
 	black unshuffle/*.py
 
 lint:
-	pylint ./unshuffle/unshuffle.py
+	pylint unshuffle
 	# pylint --disable=R,C ./hello
 
 test:
