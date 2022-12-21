@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+"""Extract shuffled text from "Rheinische Post" websites.
+
+Example:
+    Examples can be given using either the ``Example`` or ``Examples``
+    sections. Sections support any reStructuredText formatting, including
+    literal blocks::
+
+        $ python rp.py --url https://rp-online.de/nrw/panorama/wandern-in-nrw-sieben-spaziergaenge-fuer-die-feiertage_aid-81363323
+
+
+Todo:
+    * blah
+    * bloph
+"""
 import logging
 import requests
 import re

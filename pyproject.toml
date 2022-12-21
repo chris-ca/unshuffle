@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "unshuffle"
+version = "0.1.0"
+description = ""
+authors = ["Chris Weyland <github@nextmail.cc>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.28.1"
+requests-cache = "^0.9.7"
+bs4 = "^0.0.1"
+pytest = "^7.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

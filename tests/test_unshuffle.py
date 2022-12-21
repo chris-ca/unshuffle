@@ -2,7 +2,7 @@
 import pytest
 import random
 
-from unshuffle import *
+from unshuffle.unshuffle import *
 
 @pytest.mark.parametrize(
     "word, key",
