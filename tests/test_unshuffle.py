@@ -18,14 +18,6 @@ from unshuffle.unshuffle import *
 def test_get_id(word, key):
     assert get_word_id(word) == key
 
-def test_read_dictionary_from_text(dict_contents):
-    t = Dict(dict_contents)
-    assert type(t.dictionary) == dict
-
-def test_read_dictionary_from_file(dict_file):
-    t = Dict(dict_file)
-    assert type(t.dictionary) == dict
-
 @pytest.mark.parametrize(
     "shuffled, unshuffled, expected_translation",
     [

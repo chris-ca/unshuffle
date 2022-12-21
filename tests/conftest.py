@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import pytest
-from unshuffle.unshuffle import Dict, Text
+from unshuffle.unshuffle import Text
+from unshuffle.dict_ import Dict
 
 @pytest.fixture
 def words_file():
