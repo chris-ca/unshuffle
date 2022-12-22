@@ -7,10 +7,10 @@ strings are simply replaced based on the generated dictionary.
 
 Example::
 
-    shuffled_text = "grubereheCes" 
+    shuffled_text = "grubereheCes"
     txt = Text(Dict('dict.txt'))
     txt.shuffled = shuffled_text
-    # Prints: Cheeseburger 
+    # Prints: Cheeseburger
     print(txt)
 """
 import re
@@ -32,7 +32,6 @@ class NotAWord(Exception):
 
 class Untranslatable(Exception):
     """Raised if word cannot be"""
-
 
 
 class Text:
@@ -86,13 +85,13 @@ class Text:
 
         punctuation = ""
         try:
-            """ try including punctuation """
+            # try including punctuation
             key = get_word_id(token)
 
             if key in self.dictionary:
                 return self.dictionary[key]
 
-            """ try again without punctuation """
+            # try again without punctuation
             token, punctuation = word_parts(token)
             key = get_word_id(token)
             token = self.dictionary[key]
@@ -102,25 +101,28 @@ class Text:
             raise WordNotFound from exc
 
     @property
-    def percent_translated(self):
+    def percent_translated(self) -> int:
+        """Return percentage of translated words or zero, if nothing was translated."""
         self.translate()
         total = self.tokens_translated + self.tokens_not_translated
-        return 0 if total == 0 else round(
-            self.tokens_translated
-            / total
-            * 100,
-            1,
+        return (
+            0
+            if total == 0
+            else round(
+                self.tokens_translated / total * 100,
+                1,
+            )
         )
 
     @property
-    def unshuffled(self):
+    def unshuffled(self) -> str:
         """return translated text"""
         if self._unshuffled is None:
             self._unshuffled = self.translate()
         return self._unshuffled
 
     @property
-    def shuffled(self):
+    def shuffled(self) -> str:
         """return shuffled text"""
         return self._shuffled
 

@@ -9,8 +9,10 @@ from unshuffle.tools import get_text_from_url
 
 logger = logging.getLogger(__name__)
 
+
 def run():
-    requests_cache.install_cache('~/.cache/unshuffle.sqlite')
+    """executed from command line"""
+    requests_cache.install_cache("~/.cache/unshuffle.sqlite")
     parser = argparse.ArgumentParser()
     parser.add_argument("command", choices=["translate", "make_dict", "id"])
     parser.add_argument("--text", default=None, type=str, help="Text to translate")
@@ -45,7 +47,7 @@ def run():
             args.text if args.text is not None else get_text_from_url(args.url)
         )
 
-        if text.unshuffled == '':
+        if text.unshuffled == "":
             print("Text not found")
         else:
             print(text.unshuffled)
@@ -60,6 +62,7 @@ def run():
         generate(args.src_file, args.dict)
     elif args.command == "id":
         print(get_word_id(args.text))
+
 
 if __name__ == "__main__":
     run()

@@ -1,7 +1,20 @@
 #!/usr/bin/env python3
-from .unshuffle import get_word_id
+"""Generate dicts
+in everyday language.
+
+There is no further analysis of the grammar or meaning of the word. Shuffled
+strings are simply replaced based on the generated dictionary.
+
+Generate and use Dict like this::
+
+    generate("frequency.txt", "dict.txt")
+    d = Dict("dict.txt")
+
+"""
 
 import logging
+
+from .unshuffle import get_word_id
 
 logger = logging.getLogger(__name__)
 
@@ -96,4 +109,9 @@ def generate(frequency_file, dict_file):
         for k, i in dictionary.items():
             df_handle.write(k + " " + i[0] + " " + i[1] + "\n")
     dict_len = len(dictionary.items())
-    logger.info("Dictionary %s with %d entries generated from %s", dict_file, dict_len, frequency_file)
+    logger.info(
+        "Dictionary %s with %d entries generated from %s",
+        dict_file,
+        dict_len,
+        frequency_file,
+    )

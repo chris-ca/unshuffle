@@ -1,25 +1,12 @@
 #!/usr/bin/env python3
-#####################################################################################################################
-# Script Name     : .py 
-# Description     : 
-# 
-# 
-# 
-# Requires        : 
-# Arguments       :  
-# Run Information : This script is run manually|via crontab.
-# Author          : Chris, 2020
-# Output          : 
-#####################################################################################################################
-import requests
 import re
 import logging
+import requests
 from bs4 import BeautifulSoup
-
 
 logger = logging.getLogger(__name__)
 
-def get_text_from_url(url) -> str:
+def get_text_from_url(url, timeout=10) -> str:
     """GET Url and extract shuffled text from it.
 
     Different domains may use different HTML tags and classes.
@@ -40,20 +27,20 @@ def get_text_from_url(url) -> str:
 
     headers = {"User-agent": "Googlebot/2.1 (+http://www.google.com/bot.html)"}
 
-    response = requests.get(url, headers=headers)
-    logger.info("Got response, size: " + str(len(response.text)))
+    response = requests.get(url, headers=headers, timeout=timeout)
+    logger.info("Got response, size: %s", str(len(response.text)))
 
     soup = BeautifulSoup(response.text, "html.parser")
 
     class_ = "text-blurred"
     tag = "p"
-    for site in urlpatterns:
+    for site, selectors in urlpatterns.items():
         if re.search(site, url):
-            tag = urlpatterns[site][0]
-            class_ = urlpatterns[site][1]
+            tag = selectors[0]
+            class_ = selectors[1]
             break
 
-    logger.debug("Looking for paragraphs matching class: " + class_)
+    logger.debug("Looking for paragraphs matching class: %s", class_)
     text = ""
     for p in soup.find_all(tag, class_=class_):
         text += p.text
