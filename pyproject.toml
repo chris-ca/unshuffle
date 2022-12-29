@@ -6,16 +6,21 @@ authors = ["Chris Weyland <github@nextmail.cc>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-unshuffle = 'unshuffle.unshfl:run'
+unshuffle = 'unshuffle.app:run'
 
 [tool.poetry.dependencies]
 python = "^3.10"
 requests = "^2.28.1"
 requests-cache = "^0.9.7"
 bs4 = "^0.0.1"
+
+[tool.poetry.dev-dependencies]
 pytest = "^7.2.0"
 black = "^22.12.0"
+flake8 = "^6.0.0"
 
+[tool.poetry.group.dev.dependencies]
+pytest-cov = "^4.0.0"
 
 [build-system]
 requires = ["poetry-core"]

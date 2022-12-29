@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""A module to "decrypt" shuffled words based on the frequency of occurance
+"""A module to 'decrypt' shuffled words based on the frequency of occurance
 in everyday language.
 
 There is no further analysis of the grammar or meaning of the word. Shuffled
@@ -7,7 +7,7 @@ strings are simply replaced based on the generated dictionary.
 
 Example::
 
-    shuffled_text = "grubereheCes"
+    shuffled_text = 'grubereheCes'
     txt = Text(Dict('dict.txt'))
     txt.shuffled = shuffled_text
     # Prints: Cheeseburger
@@ -86,14 +86,14 @@ class Text:
         punctuation = ""
         try:
             # try including punctuation
-            key = get_word_id(token)
+            key = word_id(token)
 
             if key in self.dictionary:
                 return self.dictionary[key]
 
             # try again without punctuation
             token, punctuation = word_parts(token)
-            key = get_word_id(token)
+            key = word_id(token)
             token = self.dictionary[key]
             return token + punctuation
 
@@ -159,8 +159,10 @@ class Text:
         return block
 
 
-def get_word_id(word: str) -> str:
-    """Return string in alphabetical order."""
+def word_id(word: str) -> str:
+    """Return the unique id for the word."""
+
+    # For now we're just sorting each string in alphabetical order
     return "".join(sorted(word))
 
 

@@ -3,13 +3,11 @@ import pytest
 from unshuffle.unshuffle import Text
 from unshuffle.dict_ import Dict
 
-@pytest.fixture
-def words_file():
-    return 'tests/fixtures/frequency.txt'
 
 @pytest.fixture
-def dict_file():
-    return 'tests/fixtures/dict.txt'
+def words_file():
+    return "tests/fixtures/frequency.txt"
+
 
 @pytest.fixture
 def dict_contents():
@@ -35,9 +33,19 @@ eefnru freuen 100
 -BKaeeeklnrsstu Bernkastel-Kues 200
 deor oder 100"""
 
+
+@pytest.fixture
+def dict_file(dict_contents, tmp_path):
+    dict_file = tmp_path / "dict.txt"
+    with open(dict_file, "w", encoding="utf-8") as f:
+        f.write(dict_contents)
+        return str(dict_file)
+
+
 @pytest.fixture
 def dict_(dict_contents):
     return Dict(dict_contents)
+
 
 @pytest.fixture
 def text(dict_):
