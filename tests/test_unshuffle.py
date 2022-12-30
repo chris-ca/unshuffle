@@ -1,6 +1,6 @@
 #!/usr/bin/env python4
+"""Test translation"""
 import pytest
-import random
 
 from unshuffle.unshuffle import Text, word_id, WordNotFound, NotAWord, Untranslatable
 
@@ -22,7 +22,6 @@ def test_get_id(word, key):
         ("INVALIDKEY", "INVALIDWORD", False),
     ],
 )
-
 def test_translate_token(text, unshuffled, shuffled, expected_translation):
     if expected_translation:
         assert unshuffled == text.translate_token(shuffled)
@@ -43,10 +42,11 @@ def test_raise_if_translate_nonwords(text, token):
     with pytest.raises(NotAWord):
         text.translate_token(token)
 
+
 @pytest.mark.parametrize(
     "token",
     [
-        ('348240'),
+        ("348240"),
         ("12"),
         ("432849@39"),
     ],

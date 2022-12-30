@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Command line app'''
+"""Command line app"""
 import logging
 import argparse
 import requests_cache
@@ -9,11 +9,9 @@ from unshuffle.dict_ import Dict, DictionaryConverter
 from unshuffle.remote import text_from_url
 
 from importlib import metadata
+
 __version__ = metadata.version(__package__)
 del metadata  # optional, avoids polluting the results of dir(__package__)
-
-
-logger = logging.getLogger(__name__)
 
 
 def run():
@@ -27,7 +25,7 @@ def run():
         "-v",
         "--version",
         action="version",
-        version="%(prog)s {version}".format(version=__version__),
+        version=f"%(prog)s {__version__}",
         help="Show version",
     )
     parser.add_argument(
@@ -48,11 +46,14 @@ def run():
     )
     args = parser.parse_args()
 
+    logger = logging.getLogger(__name__)
+    logger.propagate = False
     ch = logging.StreamHandler()
     formatter = logging.Formatter("%(levelname)s - %(module)s - %(message)s")
     ch.setFormatter(formatter)
     logger.addHandler(ch)
     logging.basicConfig(level=args.loglevel)
+    logger.setLevel(args.loglevel)
 
     if args.command == "translate":
         text = Text(Dict(args.dict))
@@ -71,7 +72,9 @@ def run():
             text.tokens_not_translated,
         )
     elif args.command == "make_dict":
-        d = DictionaryConverter.from_type('frequency', **{ 'frequency_file': args.src_file, 'dict_file': args.dict})
+        d = DictionaryConverter.from_type(
+            "frequency", **{"frequency_file": args.src_file, "dict_file": args.dict}
+        )
         d.generate()
     elif args.command == "id":
         print(word_id(args.text))

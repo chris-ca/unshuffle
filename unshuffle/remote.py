@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""Extract shuffled text from websites.
+
+Only very few websites are supported at the moment
+"""
 import re
 import logging
 import requests

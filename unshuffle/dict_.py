@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-'''Generate dicts
-in everyday language.
-
-There is no further analysis of the grammar or meaning of the word. Shuffled
-strings are simply replaced based on the generated dictionary.
+"""Read and write dictionaries to use for translation.
 
 Generate and use Dict like this::
 
-    generate('frequency.txt', 'dict.txt')
-    d = Dict('dict.txt')
+    d = DictionaryConverter.from_type(
+        'frequency', **{
+            'frequency_file': 'frequency.txt',
+            'dict_file':'dict.txt'
+        })
+    d.generate()
 
-'''
+"""
 import logging
 
 from .unshuffle import word_id
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 class Dict:
-    '''Load dict and init variables.'''
+    """Load dict and init variables."""
 
     def __init__(self, dict_: str):
         self._load_dict(dict_)
@@ -31,29 +31,29 @@ class Dict:
         self.dictionary = {}
 
         def load_dict_from_file(dict_file):
-            with open(dict_file, 'r', encoding='utf-8') as df_handle:
+            with open(dict_file, "r", encoding="utf-8") as df_handle:
                 for line in df_handle:
                     add_to_dict(line)
 
         def load_dict_from_text(text):
-            for line in text.split('\n'):
+            for line in text.split("\n"):
                 add_to_dict(line)
 
         def add_to_dict(line):
-            key, word, _ = line.split(' ')
+            key, word, _ = line.split(" ")
             self.dictionary[key] = word.strip()
 
-        if '\n' in dict_:
+        if "\n" in dict_:
             load_dict_from_text(dict_)
         else:
             load_dict_from_file(dict_)
-        logger.info('Dict loaded: %d entries', len(self.dictionary))
+        logger.info("Dict loaded: %d entries", len(self.dictionary))
 
 
 class DictionaryConverter:
     @staticmethod
     def from_type(type_, **kwargs):
-        cls = (type_.title()+'DictConverter')
+        cls = type_.title() + "DictConverter"
         cls = globals()[cls]
         return cls(**kwargs)
 
@@ -62,7 +62,8 @@ class DictionaryConverter:
 
 
 class FrequencyDictConverter(DictionaryConverter):
-    '''Convert frequency file to dict.'''
+    """Convert frequency file to dict."""
+
     def __init__(self, frequency_file: str, dict_file: str):
         self.frequency_file = frequency_file
         self.dict_file = dict_file
@@ -73,19 +74,19 @@ class FrequencyDictConverter(DictionaryConverter):
 
     @staticmethod
     def parse_line(line: str) -> tuple:
-        '''Get word+frequency from line.'''
+        """Get word+frequency from line."""
         _, *word, frequency = line.split()
 
         # Ignore multiple words
         if len(word) > 1:
-            word = ' '.join(w for w in word)
-            raise ValueError('Sentence: '+word)
+            word = " ".join(w for w in word)
+            raise ValueError("Sentence: " + word)
 
         word = word[0].strip()
 
         # Ignore single characters
         if len(word) == 1:
-            raise ValueError('Single: '+word)
+            raise ValueError("Single: " + word)
 
         return word, frequency
 
@@ -94,10 +95,10 @@ class FrequencyDictConverter(DictionaryConverter):
         # Skip if an existing entry is more common
         if existing_entry and int(existing_entry[1]) > int(frequency):
             self.duplicates += 1
-            raise ValueError('Duplicate: '+ key)
+            raise ValueError("Duplicate: " + key)
 
     def generate(self):
-        '''Generate dictionary file.
+        """Generate dictionary file.
 
         Source file is expected to be in following format:
         `[number] [word] [frequency]`
@@ -107,9 +108,13 @@ class FrequencyDictConverter(DictionaryConverter):
 
         - Lines with multiple words or single characters are ignored
         - If more than 1 fingerprint/key exists for a word, the less frequent word will be ignored
-        '''
+        """
+        self.parse()
+        self.save()
 
-        with open(self.frequency_file, 'r', encoding='utf-8') as ff_handle:
+    def parse(self):
+        """Parse frequency file and load into memory."""
+        with open(self.frequency_file, "r", encoding="utf-8") as ff_handle:
             for line in ff_handle:
                 self.lines += 1
                 try:
@@ -119,26 +124,25 @@ class FrequencyDictConverter(DictionaryConverter):
                     self.dictionary[key] = [word, frequency]
                 except ValueError as exc:
                     logger.debug(
-                        'Ignored line %d: %s',
+                        "Ignored line %d: %s",
                         self.lines,
                         str(exc),
                     )
                     self.ignored += 1
 
-        logger.info('Lines checked: %s', self.lines)
+        logger.info("Lines checked: %s", self.lines)
         logger.info(
-            'Words ignored: %d (thereof dupes: %d)', self.ignored, self.duplicates
+            "Words ignored: %d (thereof dupes: %d)", self.ignored, self.duplicates
         )
 
-        self.save()
-
     def save(self):
-        with open(self.dict_file, 'w', encoding='utf-8') as df_handle:
+        """Save dictionary to file."""
+        with open(self.dict_file, "w", encoding="utf-8") as df_handle:
             for k, i in self.dictionary.items():
-                df_handle.write(k + ' ' + i[0] + ' ' + i[1] + '\n')
+                df_handle.write(k + " " + i[0] + " " + i[1] + "\n")
         dict_len = len(self.dictionary.items())
         logger.info(
-            'Dictionary %s with %d entries generated from %s',
+            "Dictionary %s with %d entries generated from %s",
             self.dict_file,
             dict_len,
             self.frequency_file,

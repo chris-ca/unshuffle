@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Shared test configuration."""
 import pytest
 from unshuffle.unshuffle import Text
 from unshuffle.dict_ import Dict
@@ -9,8 +10,8 @@ def words_file():
     return "tests/fixtures/frequency.txt"
 
 
-@pytest.fixture
-def dict_contents():
+@pytest.fixture(name="dict_contents")
+def fixture_dict_contents():
     return """der der 134545
 dei die 128801
 dnu und 98167
@@ -36,14 +37,14 @@ deor oder 100"""
 
 @pytest.fixture
 def dict_file(dict_contents, tmp_path):
-    dict_file = tmp_path / "dict.txt"
-    with open(dict_file, "w", encoding="utf-8") as f:
+    df = tmp_path / "dict.txt"
+    with open(df, "w", encoding="utf-8") as f:
         f.write(dict_contents)
-        return str(dict_file)
+        return str(df)
 
 
-@pytest.fixture
-def dict_(dict_contents):
+@pytest.fixture(name="dict_")
+def fixture_dict_(dict_contents):
     return Dict(dict_contents)
 
 

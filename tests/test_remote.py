@@ -1,28 +1,31 @@
+"""Test remote module"""
 import pytest
-import random
 
 from unshuffle.remote import extract_text, get_selectors, get_url, TextNotFoundException
-from requests.exceptions import ConnectionError
+import requests
+
 
 @pytest.mark.parametrize(
     "file, tag, class_",
     [("rp.html", "div", "blur-sm"), ("ga.html", "p", "text-blurred")],
 )
 def test_extract_text(file, tag, class_):
-    with open("tests/fixtures/" + file, "r") as fp:
+    with open("tests/fixtures/" + file, "r", encoding="UTF-8") as fp:
         html = fp.read()
     assert extract_text(html, tag, class_) > ""
 
+
 @pytest.mark.parametrize(
-    'html',
+    "html",
     [
         ('<html><p class="">test text is not found</p></html>'),
-        ('<html><div class="text-blue">test text is not found</p></html>')
-    ]
+        ('<html><div class="text-blue">test text is not found</p></html>'),
+    ],
 )
 def test_fail_if_text_not_found(html):
     with pytest.raises(TextNotFoundException):
         extract_text(html)
+
 
 @pytest.mark.parametrize("url, tag, class_", [("https://ga.de/", "p", "text-blurred")])
 def test_get_selectors(url, tag, class_):
@@ -30,16 +33,18 @@ def test_get_selectors(url, tag, class_):
     assert r_tag == tag
     assert r_class_ == class_
 
+
 @pytest.mark.parametrize(
-    'url',
+    "url",
     [
-        ('https://HOST-NOT-EXISTING'),
-        ('https://invalid\\url'),
-    ]
+        ("https://HOST-NOT-EXISTING"),
+        ("https://invalid\\url"),
+    ],
 )
 def test_fail_if_invalid_url(url):
-    with pytest.raises(ConnectionError):
+    with pytest.raises(requests.exceptions.ConnectionError):
         get_url(url)
+
 
 @pytest.mark.skip()
 def test_get_text_from_url(url):

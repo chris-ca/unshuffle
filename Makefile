@@ -2,11 +2,13 @@ install:
 	poetry install
 
 format:
-	black --skip-string-normalization unshuffle/*.py
+	black unshuffle/*.py tests/*.py
+	#black --skip-string-normalization unshuffle/*.py
 
 lint:
-	flake8 unshuffle
+	flake8 $(git ls-files '*.py')
 	pylint unshuffle
+	# flake8 unshuffle test
 	# pylint --disable=R,C ./hello
 
 test:
