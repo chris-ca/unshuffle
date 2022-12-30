@@ -166,7 +166,7 @@ def word_id(word: str) -> str:
     return "".join(sorted(word))
 
 
-def word_parts(word: str) -> list:
+def word_parts(word: str) -> tuple:
     """Separate punctuation and letters.
 
     Returns:

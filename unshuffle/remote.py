@@ -34,8 +34,8 @@ def get_selectors(url) -> tuple:
 
 def text_from_url(url):
     tag, class_ = get_selectors(url)
-    response = get_url(url)
-    return extract_text(response.text, class_=class_, tag=tag)
+    response_body = get_url(url)
+    return extract_text(response_body, class_=class_, tag=tag)
 
 
 def get_url(url, timeout=10, headers=None) -> str:
@@ -55,7 +55,7 @@ def get_url(url, timeout=10, headers=None) -> str:
     response = requests.get(url, headers=headers, timeout=timeout)
     logger.info("Got response, size: %s", str(len(response.text)))
     logger.debug("Response: %s", response.text)
-    return response
+    return response.text
 
 
 def extract_text(html, tag="p", class_="text-blurred") -> str:

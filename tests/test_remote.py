@@ -1,7 +1,8 @@
 """Test remote module"""
 import pytest
 
-from unshuffle.remote import extract_text, get_selectors, get_url, TextNotFoundException
+from unshuffle.remote import extract_text, get_selectors, \
+    text_from_url, get_url, TextNotFoundException
 import requests
 
 
@@ -46,6 +47,13 @@ def test_fail_if_invalid_url(url):
         get_url(url)
 
 
-@pytest.mark.skip()
+@pytest.mark.parametrize(
+    "url",
+    [
+        ("https://ga.de/region/sieg-und-rhein/troisdorf/"
+            "s13-troisdorf-bleibt-auf-unbestimmte-zeit-endstation_aid-82139435")
+    ],
+)
 def test_get_text_from_url(url):
-    pass
+    text = text_from_url(url)
+    assert len(text) > 100

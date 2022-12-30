@@ -6,6 +6,7 @@ format:
 	#black --skip-string-normalization unshuffle/*.py
 
 lint:
+	mypy unshuffle
 	flake8 $(git ls-files '*.py')
 	pylint unshuffle
 	# flake8 unshuffle test

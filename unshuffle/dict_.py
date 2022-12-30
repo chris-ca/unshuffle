@@ -14,6 +14,7 @@ Generate and use Dict like this::
 import logging
 
 from .unshuffle import word_id
+import typing
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +68,7 @@ class FrequencyDictConverter(DictionaryConverter):
     def __init__(self, frequency_file: str, dict_file: str):
         self.frequency_file = frequency_file
         self.dict_file = dict_file
-        self.dictionary = {}
+        self.dictionary: typing.Dict = {}
         self.duplicates = 0
         self.ignored = 0
         self.lines = 0
@@ -75,14 +76,14 @@ class FrequencyDictConverter(DictionaryConverter):
     @staticmethod
     def parse_line(line: str) -> tuple:
         """Get word+frequency from line."""
-        _, *word, frequency = line.split()
+        _, *wordlist, frequency = line.split()
 
         # Ignore multiple words
-        if len(word) > 1:
-            word = " ".join(w for w in word)
+        if len(wordlist) > 1:
+            word = " ".join(w for w in wordlist)
             raise ValueError("Sentence: " + word)
 
-        word = word[0].strip()
+        word = wordlist[0].strip()
 
         # Ignore single characters
         if len(word) == 1:
