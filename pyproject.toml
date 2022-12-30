@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "unshuffle"
-version = "0.1.6"
+version = "0.1.7"
 description = "Unshuffle words based on dictionary"
 authors = ["Chris Weyland <github@nextmail.cc>"]
 readme = "README.md"

@@ -26,7 +26,7 @@ def test_make_dictionary(words_file, tmp_path):
 def test_create_object():
     assert isinstance(
         DictionaryConverter.from_type(
-            'frequency', {'frequency_file': None, 'dict_file': None}
+            'frequency', **{'frequency_file': None, 'dict_file': None}
         ),
         FrequencyDictConverter,
     )

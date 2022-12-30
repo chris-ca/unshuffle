@@ -4,15 +4,14 @@ import logging
 import argparse
 import requests_cache
 import sys
+from unshuffle.unshuffle import Text, word_id
+from unshuffle.dict_ import Dict, DictionaryConverter
+from unshuffle.remote import text_from_url
 
 from importlib import metadata
-
 __version__ = metadata.version(__package__)
 del metadata  # optional, avoids polluting the results of dir(__package__)
 
-from unshuffle.unshuffle import Text, word_id
-from unshuffle.dict_ import Dict, FrequencyDictConverter
-from unshuffle.remote import text_from_url
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +71,7 @@ def run():
             text.tokens_not_translated,
         )
     elif args.command == "make_dict":
-        d = Dictionary.from_class(FrequencyDictConverter, args.src_file, args.dict)
+        d = DictionaryConverter.from_type('frequency', **{ 'frequency_file': args.src_file, 'dict_file': args.dict})
         d.generate()
     elif args.command == "id":
         print(word_id(args.text))

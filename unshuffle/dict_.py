@@ -52,7 +52,7 @@ class Dict:
 
 class DictionaryConverter:
     @staticmethod
-    def from_type(type_, kwargs):
+    def from_type(type_, **kwargs):
         cls = (type_.title()+'DictConverter')
         cls = globals()[cls]
         return cls(**kwargs)
@@ -79,13 +79,13 @@ class FrequencyDictConverter(DictionaryConverter):
         # Ignore multiple words
         if len(word) > 1:
             word = ' '.join(w for w in word)
-            raise ValueError('Sentence')
+            raise ValueError('Sentence: '+word)
 
         word = word[0].strip()
 
         # Ignore single characters
         if len(word) == 1:
-            raise ValueError('Single')
+            raise ValueError('Single: '+word)
 
         return word, frequency
 
@@ -94,7 +94,7 @@ class FrequencyDictConverter(DictionaryConverter):
         # Skip if an existing entry is more common
         if existing_entry and int(existing_entry[1]) > int(frequency):
             self.duplicates += 1
-            raise ValueError('Duplicate')
+            raise ValueError('Duplicate: '+ key)
 
     def generate(self):
         '''Generate dictionary file.
@@ -119,17 +119,15 @@ class FrequencyDictConverter(DictionaryConverter):
                     self.dictionary[key] = [word, frequency]
                 except ValueError as exc:
                     logger.debug(
-                        'Ignored line %s: "%s" (n=%d): %s',
+                        'Ignored line %d: %s',
                         self.lines,
-                        word,
-                        int(frequency),
                         str(exc),
                     )
                     self.ignored += 1
 
         logger.info('Lines checked: %s', self.lines)
         logger.info(
-            'Words ignored (thereof dupes): %d (%d) ', self.ignored, self.duplicates
+            'Words ignored: %d (thereof dupes: %d)', self.ignored, self.duplicates
         )
 
         self.save()
