@@ -1,3 +1,5 @@
+[![Python application](https://github.com/chris-ca/unshuffle/actions/workflows/python-app.yml/badge.svg)](https://github.com/chris-ca/unshuffle/actions/workflows/python-app.yml)
+
 ## Idea
 Some (German) news websites show placeholder texts to unregistered users. The placeholder text is generated from the actual article by shuffling the letters of individual words.
 
