@@ -52,7 +52,9 @@ class Dict:
 
 class DictionaryConverter:
     @staticmethod
-    def from_class(cls, **kwargs):
+    def from_type(type_, kwargs):
+        cls = (type_.title()+'DictConverter')
+        cls = globals()[cls]
         return cls(**kwargs)
 
     def __contains__(self, s):
